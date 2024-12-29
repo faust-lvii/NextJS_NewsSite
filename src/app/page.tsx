@@ -1,16 +1,18 @@
-import { getAllNews } from "@/lib/news";
 import Link from "next/link";
 import Image from "next/image";
+import { News } from "@/lib/db";
+import dbConnect from "@/lib/db";
 
 export default async function Home() {
-  const newsData = await getAllNews();
+  await dbConnect();
+  const newsData = await News.find().sort({ date: -1 });
 
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Haberler</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {newsData.map((news) => (
-          <Link href={`/haber/${news.id}`} key={news.id} className="group">
+          <Link href={`/haber/${news._id}`} key={news._id} className="group">
             <article className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.02]">
               <div className="relative h-48 w-full">
                 <Image

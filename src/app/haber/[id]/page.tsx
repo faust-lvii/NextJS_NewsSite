@@ -1,4 +1,5 @@
-import { getNewsById } from "@/lib/news";
+import { News } from "@/lib/db";
+import dbConnect from "@/lib/db";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,7 +14,12 @@ interface PageProps {
 
 export default async function NewsDetail({ params }: PageProps) {
   try {
-    const news = await getNewsById(params.id);
+    await dbConnect();
+    const news = await News.findById(params.id);
+    
+    if (!news) {
+      notFound();
+    }
 
     return (
       <main className="container mx-auto px-4 py-8">
@@ -58,15 +64,9 @@ export default async function NewsDetail({ params }: PageProps) {
 
 // Statik parametreleri önceden oluştur
 export async function generateStaticParams() {
-  return [
-    { id: "1" },
-    { id: "2" },
-    { id: "3" },
-    { id: "4" },
-    { id: "5" },
-    { id: "6" },
-    { id: "7" },
-    { id: "8" },
-    { id: "9" }
-  ];
+  await dbConnect();
+  const news = await News.find().select('_id');
+  return news.map((item) => ({
+    id: item._id.toString(),
+  }));
 } 
