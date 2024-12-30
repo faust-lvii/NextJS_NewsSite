@@ -6,10 +6,14 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "create-admin": "node scripts/create-admin.js"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
     "gray-matter": "^4.0.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.12.0",
