@@ -1,94 +1,53 @@
 import mongoose from 'mongoose';
 
-declare global {
-  var mongoose: {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
-  };
-}
-
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI ortam değişkeni tanımlanmamış.');
+  throw new Error(
+    'Please define the MONGODB_URI environment variable inside .env.local'
+  );
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+interface Connection {
+  isConnected?: number;
 }
+
+const connection: Connection = {};
 
 async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
-      return mongoose;
-    });
+  if (connection.isConnected) {
+    return;
   }
 
   try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
+    const db = await mongoose.connect(MONGODB_URI);
+    connection.isConnected = db.connections[0].readyState;
+    console.log('MongoDB bağlantısı başarılı');
+  } catch (error) {
+    console.error('MongoDB bağlantı hatası:', error);
+    throw error;
   }
-
-  return cached.conn;
 }
 
 // Haber şeması
 const newsSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  summary: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-  imageUrl: {
-    type: String,
-    required: true,
-  },
-  author: {
-    type: String,
-    required: true,
-  },
+  title: { type: String, required: true },
+  summary: { type: String, required: true },
+  content: { type: String, required: true },
+  category: { type: String, required: true },
+  imageUrl: { type: String, required: true },
+  author: { type: String, required: true },
+  date: { type: Date, default: Date.now },
 });
 
-// Admin kullanıcı şeması
+// Kullanıcı şeması
 const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
 });
 
-export const News = mongoose.models.News || mongoose.model('News', newsSchema);
-export const User = mongoose.models.User || mongoose.model('User', userSchema);
-export default dbConnect; 
+// Model tanımlamaları
+const News = mongoose.models.News || mongoose.model('News', newsSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+
+export { dbConnect as default, News, User }; 
