@@ -32,10 +32,7 @@ export async function POST(request: Request) {
     console.log('Başarılı giriş:', username);
     
     // Başarılı giriş yanıtını ve cookie'yi oluştur
-    const response = createAuthResponse({ success: true }, token);
-    console.log('Auth response oluşturuldu');
-    
-    return response;
+    return createAuthResponse({ success: true }, token);
   } catch (error) {
     console.error('Giriş hatası:', error);
     return NextResponse.json({ error: 'Giriş yapılırken bir hata oluştu' }, { status: 500 });

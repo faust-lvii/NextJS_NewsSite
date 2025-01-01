@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create-admin": "node scripts/create-admin.js"
+    "create-admin": "node scripts/create-admin.js",
+    "import-news": "node scripts/import-news.js"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",

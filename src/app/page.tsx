@@ -32,13 +32,20 @@ export default function Home() {
       try {
         // Haberleri çek
         const response = await fetch('/api/news');
-        const news = await response.json();
-        setNewsData(news);
+        if (!response.ok) {
+          throw new Error('Haberler yüklenirken bir hata oluştu');
+        }
+        const data = await response.json();
+        // Eğer data bir array değilse, boş array kullan
+        setNewsData(Array.isArray(data) ? data : []);
 
         // Kripto fiyatlarını çek
         const cryptoResponse = await fetch(
           'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,ripple,cardano&order=market_cap_desc&sparkline=false'
         );
+        if (!cryptoResponse.ok) {
+          throw new Error('Kripto fiyatları yüklenirken bir hata oluştu');
+        }
         const cryptoData = await cryptoResponse.json();
         setCryptoPrices(cryptoData);
       } catch (error) {
@@ -55,6 +62,89 @@ export default function Home() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Eğer newsData boşsa veya array değilse, boş bir içerik göster
+  if (!Array.isArray(newsData) || newsData.length === 0) {
+    return (
+      <>
+        {/* Header */}
+        <header className="bg-[#0a0a0a] border-b border-white/10">
+          <div className="container mx-auto px-4">
+            <nav className="flex items-center justify-between h-16">
+              <Link href="/" className="text-2xl font-bold text-white">
+                GG<span className="text-blue-500">.news</span>
+              </Link>
+              <div className="flex space-x-6">
+                <Link href="/kategori/yapay-zeka" className="text-gray-300 hover:text-white transition-colors">Yapay Zeka</Link>
+                <Link href="/kategori/blockchain" className="text-gray-300 hover:text-white transition-colors">Blockchain</Link>
+                <Link href="/kategori/mobil" className="text-gray-300 hover:text-white transition-colors">Mobil</Link>
+                <Link href="/kategori/yazilim" className="text-gray-300 hover:text-white transition-colors">Yazılım</Link>
+                <Link href="/kategori/donanim" className="text-gray-300 hover:text-white transition-colors">Donanım</Link>
+                <div className="relative group">
+                  <button className="text-gray-300 hover:text-white transition-colors flex items-center gap-1">
+                    Tüm Kategoriler
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="relative">
+                <input
+                  type="search"
+                  placeholder="Haberlerde ara..."
+                  className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-transparent w-64"
+                />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute right-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </nav>
+          </div>
+        </header>
+
+        {/* Crypto Ticker */}
+        <div className="bg-[#0a0a0a] border-b border-white/10 py-3">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-semibold text-blue-400">CANLI KRİPTO FİYATLARI</div>
+              <div className="flex items-center space-x-6 overflow-x-auto whitespace-nowrap">
+                {isLoading ? (
+                  <div className="animate-pulse flex space-x-6">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-6 w-32 bg-white/5 rounded" />
+                    ))}
+                  </div>
+                ) : (
+                  cryptoPrices.map((crypto) => (
+                    <div key={crypto.id} className="flex items-center space-x-2">
+                      <span className="text-gray-300 uppercase">{crypto.symbol}</span>
+                      <span className="text-white font-medium">${crypto.current_price.toLocaleString()}</span>
+                      <span className={`text-sm ${crypto.price_change_percentage_24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {crypto.price_change_percentage_24h >= 0 ? '↑' : '↓'}
+                        {Math.abs(crypto.price_change_percentage_24h).toFixed(2)}%
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <main className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4">
+          <div className="container mx-auto">
+            <h1 className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-blue-400 to-blue-300">
+              Teknoloji Haberleri
+            </h1>
+            <div className="text-center text-gray-400">
+              Henüz haber bulunmuyor...
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
