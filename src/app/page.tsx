@@ -26,32 +26,55 @@ interface NewsItem {
 export default function Home() {
   const [newsData, setNewsData] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      fetchData();
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/news/search?q=${encodeURIComponent(searchQuery)}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setNewsData(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Arama hatası:', error);
+      setNewsData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/news');
+      console.log('API yanıt durumu:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Yüklenen haber sayısı:', Array.isArray(data) ? data.length : 0);
+      
+      setNewsData(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Veri çekme hatası:', error);
+      setNewsData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        // Haberleri çek
-        const response = await fetch('/api/news');
-        console.log('API yanıt durumu:', response.status);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Yüklenen haber sayısı:', Array.isArray(data) ? data.length : 0);
-        
-        // Eğer data bir array değilse veya boşsa, boş array kullan
-        setNewsData(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Veri çekme hatası:', error);
-        setNewsData([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -81,15 +104,29 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-              <div className="relative">
-                <input
-                  type="search"
-                  placeholder="Haberlerde ara..."
-                  className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-transparent w-64"
-                />
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute right-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+              <div className="flex-1 max-w-xl mx-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Haberlerde ara..."
+                    className="w-full px-4 py-2 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 text-white"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch();
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </nav>
           </div>
@@ -143,15 +180,29 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="relative">
-              <input
-                type="search"
-                placeholder="Haberlerde ara..."
-                className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-transparent w-64"
-              />
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute right-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+            <div className="flex-1 max-w-xl mx-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Haberlerde ara..."
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 text-white"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    }
+                  }}
+                />
+                <button
+                  onClick={handleSearch}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </nav>
         </div>
