@@ -30,16 +30,23 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         // Haberleri çek
         const response = await fetch('/api/news');
+        console.log('API yanıt durumu:', response.status);
+        
         if (!response.ok) {
-          throw new Error('Haberler yüklenirken bir hata oluştu');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const data = await response.json();
-        // Eğer data bir array değilse, boş array kullan
+        console.log('Yüklenen haber sayısı:', Array.isArray(data) ? data.length : 0);
+        
+        // Eğer data bir array değilse veya boşsa, boş array kullan
         setNewsData(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Veri çekme hatası:', error);
+        setNewsData([]);
       } finally {
         setIsLoading(false);
       }

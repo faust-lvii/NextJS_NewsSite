@@ -6,10 +6,23 @@ import dbConnect from '@/lib/db';
 export async function GET() {
   try {
     await dbConnect();
+    console.log('MongoDB bağlantısı başarılı');
+
     const news = await News.find().sort({ date: -1 });
+    console.log(`${news.length} haber bulundu`);
+
+    if (!news || news.length === 0) {
+      console.log('Haber bulunamadı');
+      return NextResponse.json([], { status: 200 });
+    }
+
     return NextResponse.json(news);
   } catch (error) {
-    return NextResponse.json({ error: 'Haberler yüklenirken bir hata oluştu' }, { status: 500 });
+    console.error('Haber yükleme hatası:', error);
+    return NextResponse.json(
+      { error: 'Haberler yüklenirken bir hata oluştu' },
+      { status: 500 }
+    );
   }
 }
 
