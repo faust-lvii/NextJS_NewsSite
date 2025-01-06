@@ -104,12 +104,12 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-              <div className="flex-1 max-w-xl mx-4">
+              <div className="flex-1 max-w-xs mx-4">
                 <div className="relative">
                   <input
                     type="text"
                     placeholder="Haberlerde ara..."
-                    className="w-full px-4 py-2 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 text-white"
+                    className="w-full px-4 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 text-white text-sm"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => {
@@ -122,7 +122,7 @@ export default function Home() {
                     onClick={handleSearch}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </button>
@@ -180,12 +180,12 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="flex-1 max-w-xl mx-4">
+            <div className="flex-1 max-w-xs mx-4">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Haberlerde ara..."
-                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 text-white"
+                  className="w-full px-4 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-blue-500 text-white text-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
@@ -198,7 +198,7 @@ export default function Home() {
                   onClick={handleSearch}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </button>

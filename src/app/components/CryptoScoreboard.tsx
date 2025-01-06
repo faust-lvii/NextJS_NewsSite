@@ -1,127 +1,122 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 interface CryptoPrice {
   id: string;
   symbol: string;
   name: string;
+  image: string;
   current_price: number;
   price_change_percentage_24h: number;
-  image: string;
 }
 
 export default function CryptoScoreboard() {
-  const [cryptoPrices, setCryptoPrices] = useState<CryptoPrice[]>([]);
+  const [prices, setPrices] = useState<CryptoPrice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,ripple,cardano,dogecoin,polkadot,chainlink,polygon,avalanche-2&order=market_cap_desc&per_page=10&page=1&sparkline=false',
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('API yanıt vermedi');
+      }
+
+      const data = await response.json();
+      setPrices(data);
+      setError(null);
+    } catch (err) {
+      console.error('Kripto fiyatları yüklenirken hata:', err);
+      setError('Fiyatlar yüklenemedi. Lütfen daha sonra tekrar deneyin.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,ripple,cardano,dogecoin,polkadot,chainlink,polygon,avalanche-2&order=market_cap_desc&sparkline=false'
-        );
-        if (!response.ok) {
-          throw new Error('Kripto fiyatları yüklenirken bir hata oluştu');
-        }
-        const data = await response.json();
-        setCryptoPrices(data);
-      } catch (error) {
-        console.error('Veri çekme hatası:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
-    const interval = setInterval(() => {
-      fetchData();
-    }, 30000); // Her 30 saniyede bir güncelle
-
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="bg-[#0a0a0a] p-4 rounded-xl border border-white/10 h-full">
-      <div className="mb-4">
-        <h2 className="text-sm font-semibold text-blue-400">CANLI KRİPTO FİYATLARI</h2>
+  if (error) {
+    return (
+      <div className="bg-[#111111] rounded-lg p-4 h-full">
+        <h2 className="text-xl font-bold mb-4">Canlı Kripto Fiyatları</h2>
+        <div className="text-red-400 text-sm">{error}</div>
       </div>
+    );
+  }
 
-      <div className="space-y-2 h-[calc(100%-2rem)] overflow-y-auto scrollbar-thin scrollbar-track-[#1a1a1a] scrollbar-thumb-[#333] hover:scrollbar-thumb-[#444] pr-2">
+  return (
+    <div className="bg-[#111111] rounded-lg p-4 h-full overflow-hidden">
+      <h2 className="text-xl font-bold mb-4">Canlı Kripto Fiyatları</h2>
+      <div className="space-y-4 overflow-y-auto h-[calc(100%-4rem)] custom-scrollbar">
         {isLoading ? (
-          <div className="animate-pulse space-y-2">
-            {[...Array(10)].map((_, i) => (
-              <div key={i} className="h-12 bg-white/5 rounded-lg" />
-            ))}
-          </div>
-        ) : (
-          cryptoPrices.map((crypto) => (
-            <div
-              key={crypto.id}
-              className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full overflow-hidden relative">
-                  <Image
-                    src={crypto.image}
-                    alt={crypto.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white group-hover:text-blue-400 transition-colors">
-                    {crypto.name}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {crypto.symbol.toUpperCase()}/USD
-                  </div>
-                </div>
+          // Loading durumu
+          Array(10).fill(0).map((_, index) => (
+            <div key={index} className="animate-pulse flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-gray-800 rounded-full"></div>
+                <div className="h-4 w-20 bg-gray-800 rounded"></div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-medium text-white">
-                  ${crypto.current_price.toLocaleString()}
-                </div>
-                <div
-                  className={`text-xs ${
-                    crypto.price_change_percentage_24h >= 0
+              <div className="h-4 w-24 bg-gray-800 rounded"></div>
+            </div>
+          ))
+        ) : (
+          prices.map((price) => (
+            <div key={price.id} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Image
+                  src={price.image}
+                  alt={price.name}
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                />
+                <span className="font-medium">{price.symbol.toUpperCase()}</span>
+              </div>
+              <div className="flex flex-col items-end">
+                <span className="font-medium">
+                  ${price.current_price.toLocaleString()}
+                </span>
+                <span
+                  className={`text-sm ${
+                    price.price_change_percentage_24h >= 0
                       ? 'text-green-400'
                       : 'text-red-400'
                   }`}
                 >
-                  {crypto.price_change_percentage_24h >= 0 ? '↑' : '↓'}
-                  {Math.abs(crypto.price_change_percentage_24h).toFixed(2)}%
-                </div>
+                  {price.price_change_percentage_24h.toFixed(2)}%
+                </span>
               </div>
             </div>
           ))
         )}
       </div>
-
-      <style jsx global>{`
-        /* Webkit (Chrome, Safari, Edge) için scrollbar özelleştirmesi */
-        .scrollbar-thin::-webkit-scrollbar {
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
         }
-
-        .scrollbar-thin::-webkit-scrollbar-track {
-          background: #1a1a1a;
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #111111;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #222;
           border-radius: 2px;
         }
-
-        .scrollbar-thin::-webkit-scrollbar-thumb {
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #333;
-          border-radius: 2px;
-        }
-
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-          background: #444;
-        }
-
-        /* Firefox için scrollbar özelleştirmesi */
-        .scrollbar-thin {
-          scrollbar-width: thin;
-          scrollbar-color: #333 #1a1a1a;
         }
       `}</style>
     </div>
