@@ -46,7 +46,7 @@ Modern ve kullanıcı dostu bir teknoloji haber portalı. Next.js 13+, TypeScrip
 
 1. Repoyu klonlayın:
 \`\`\`bash
-git clone https://github.com/yourusername/ggnews.git
+git clone https://github.com/faust-lvii/ggnews.git
 \`\`\`
 
 2. Bağımlılıkları yükleyin:
