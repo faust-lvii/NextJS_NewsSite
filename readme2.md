@@ -1,16 +1,16 @@
-# GG.news - Teknoloji Haber Portalı
+# GG.news - Teknoloji Haber Portalı:  Geleceğin Haberlerini Bugünden Okuyun!
 
-Modern ve kullanıcı dostu bir teknoloji haber portalı. Next.js 13+, TypeScript, Tailwind CSS ve MongoDB kullanılarak geliştirilmiştir.
+Modern ve kullanıcı dostu bir teknoloji haber portalı. Next.js 13+, TypeScript, Tailwind CSS ve MongoDB kullanılarak geliştirilmiştir.  [Projenin ekran görüntüsünü buraya ekleyin]
 
 ## 🚀 Özellikler
 
-### 📱 Kullanıcı Arayüzü
-- Modern ve responsive tasarım
-- Kategori bazlı haber görüntüleme
-- Canlı kripto para fiyatları takibi
-- Gelişmiş arama fonksiyonu
-- Dinamik haber detay sayfaları
-- Markdown formatında içerik desteği
+### ✨ Çarpıcı ve Kullanıcı Dostu Arayüz
+- Modern ve responsive tasarım (her cihazda mükemmel görüntüleme)
+- Kategori bazlı haber görüntüleme (kolayca istediğiniz konuları bulun)
+- Canlı kripto para fiyatları takibi (anlık piyasa verileri)
+- Gelişmiş arama fonksiyonu (hızlı ve kolay haber arama)
+- Dinamik haber detay sayfaları (detaylı ve zengin içerik)
+- Markdown formatında içerik desteği (esnek ve zengin içerik oluşturma)
 
 ### 📂 Kategoriler
 - Yapay Zeka
@@ -26,12 +26,12 @@ Modern ve kullanıcı dostu bir teknoloji haber portalı. Next.js 13+, TypeScrip
 - Medya yönetimi
 
 ### 💻 Teknik Özellikler
-- Server-side rendering
-- API route'ları
-- MongoDB entegrasyonu
-- JWT bazlı kimlik doğrulama
-- Responsive görüntü optimizasyonu
-- SEO optimizasyonu
+- **Server-side rendering (SSR):**  Hızlı yükleme süreleri ve SEO optimizasyonu için.
+- **API route'ları:**  Verimli ve ölçeklenebilir bir API mimarisi.
+- **MongoDB entegrasyonu:**  Esnek ve ölçeklenebilir bir veritabanı çözümü.  (MongoDB Atlas kullanımı önerilir)
+- **JWT bazlı kimlik doğrulama:**  Güvenli ve güvenilir kullanıcı kimlik doğrulaması.
+- **Responsive görüntü optimizasyonu:**  Her cihazda mükemmel görüntü kalitesi.
+- **SEO optimizasyonu:**  Arama motorlarında üst sıralarda yer almak için optimize edilmiştir.
 
 ## 🔧 Kullanılan Teknolojiler
 
@@ -44,21 +44,21 @@ Modern ve kullanıcı dostu bir teknoloji haber portalı. Next.js 13+, TypeScrip
 
 ## 🚀 Kurulum
 
-1. Repoyu klonlayın:
-\`\`\`bash
-git clone https://github.com/faust-lvii/ggnews.git
-\`\`\`
+1. **Repoyu klonlayın:**
+   ```bash
+   git clone https://github.com/faust-lvii/ggnews.git
+   ```
 
-2. Bağımlılıkları yükleyin:
-\`\`\`bash
-npm install
-\`\`\`
+2. **Bağımlılıkları yükleyin:**
+   ```bash
+   npm install
+   ```
 
-3. `.env.local` dosyasını oluşturun:
-\`\`\`env
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-\`\`\`
+3. **`.env.local` dosyasını oluşturun:**  [MongoDB Atlas'tan](https://www.mongodb.com/cloud/atlas) bir `MONGODB_URI` oluşturun ve `JWT_SECRET` için güçlü bir şifre belirleyin.
+   ```env
+   MONGODB_URI=your_mongodb_uri
+   JWT_SECRET=your_jwt_secret
+   ```
 
 4. Geliştirme sunucusunu başlatın:
 \`\`\`bash
@@ -84,6 +84,10 @@ npm run dev
 - `GET /api/news/[id]`: Belirli bir haberin detaylarını getirir
 - `GET /api/news/search?q=query`: Haberlerde arama yapar
 
+## 📄 Katkıda Bulunma
+
+Projemize katkıda bulunmak isterseniz, lütfen [katkıda bulunma kılavuzumuza](CONTRIBUTING.md) bakın.
+
 ## 📄 Lisans
 
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
+Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
