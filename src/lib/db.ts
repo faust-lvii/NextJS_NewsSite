@@ -1,7 +1,16 @@
 import mongoose from 'mongoose';
 
-// MongoDB URI'sini type assertion ile string olarak belirtiyoruz
-const MONGODB_URI = process.env.MONGODB_URI as string;
+interface GlobalMongoose {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var mongoose: GlobalMongoose;
+}
+
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
   throw new Error(
@@ -9,25 +18,33 @@ if (!MONGODB_URI) {
   );
 }
 
-interface Connection {
-  isConnected?: number;
+if (!global.mongoose) {
+  global.mongoose = { conn: null, promise: null };
 }
 
-const connection: Connection = {};
-
 async function dbConnect() {
-  if (connection.isConnected) {
-    return;
+  if (global.mongoose.conn) {
+    return global.mongoose.conn;
+  }
+
+  if (!global.mongoose.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    global.mongoose.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+      return mongoose;
+    });
   }
 
   try {
-    const db = await mongoose.connect(MONGODB_URI);
-    connection.isConnected = db.connections[0].readyState;
-    console.log('MongoDB bağlantısı başarılı');
-  } catch (error) {
-    console.error('MongoDB bağlantı hatası:', error);
-    throw error;
+    global.mongoose.conn = await global.mongoose.promise;
+  } catch (e) {
+    global.mongoose.promise = null;
+    throw e;
   }
+
+  return global.mongoose.conn;
 }
 
 // Haber şeması

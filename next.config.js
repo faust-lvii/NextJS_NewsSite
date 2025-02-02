@@ -12,9 +12,10 @@ const nextConfig = {
       },
     ],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
+  experimental: {
+    serverComponentsExternalPackages: ['mongoose'],
   },
+  output: 'standalone',
 }
 
 module.exports = nextConfig 
