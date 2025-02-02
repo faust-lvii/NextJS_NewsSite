@@ -9,80 +9,81 @@ type RouteParams = {
 };
 
 export async function GET(
-  _request: NextRequest,
-  context: RouteParams
+  request: NextRequest,
+  { params }: RouteParams
 ) {
   try {
     await dbConnect();
 
-    const news = await News.findById(context.params.id);
+    const news = await News.findById(params.id);
     
     if (!news) {
       return NextResponse.json(
-        { error: 'Haber bulunamadı' },
+        { message: 'Haber bulunamadı' },
         { status: 404 }
       );
     }
 
     return NextResponse.json(news);
   } catch (error) {
-    console.error('Haber detayı yüklenirken hata:', error);
     return NextResponse.json(
-      { error: 'Haber detayı yüklenirken bir hata oluştu' },
+      { message: 'Bir hata oluştu' },
       { status: 500 }
     );
   }
 }
 
-// Haber güncelle
 export async function PUT(
   request: NextRequest,
-  context: RouteParams
+  { params }: RouteParams
 ) {
   try {
     await dbConnect();
-    const data = await request.json();
-    const news = await News.findByIdAndUpdate(context.params.id, data, { new: true });
-    
-    if (!news) {
+    const body = await request.json();
+
+    const updatedNews = await News.findByIdAndUpdate(
+      params.id,
+      body,
+      { new: true }
+    );
+
+    if (!updatedNews) {
       return NextResponse.json(
-        { error: 'Haber bulunamadı' },
+        { message: 'Haber bulunamadı' },
         { status: 404 }
       );
     }
-    
-    return NextResponse.json(news);
+
+    return NextResponse.json(updatedNews);
   } catch (error) {
-    console.error('Haber güncellenirken hata:', error);
     return NextResponse.json(
-      { error: 'Haber güncellenirken bir hata oluştu' },
+      { message: 'Bir hata oluştu' },
       { status: 500 }
     );
   }
 }
 
-// Haber sil
 export async function DELETE(
-  _request: NextRequest,
-  context: RouteParams
+  request: NextRequest,
+  { params }: RouteParams
 ) {
   try {
     await dbConnect();
-    const news = await News.findByIdAndDelete(context.params.id);
-    
-    if (!news) {
+
+    const deletedNews = await News.findByIdAndDelete(params.id);
+
+    if (!deletedNews) {
       return NextResponse.json(
-        { error: 'Haber bulunamadı' },
+        { message: 'Haber bulunamadı' },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json({ message: 'Haber başarıyla silindi' });
   } catch (error) {
-    console.error('Haber silinirken hata:', error);
     return NextResponse.json(
-      { error: 'Haber silinirken bir hata oluştu' },
+      { message: 'Bir hata oluştu' },
       { status: 500 }
     );
   }
-} 
+}
