@@ -2,19 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { News } from '@/lib/db';
 import dbConnect from '@/lib/db';
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
-
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   try {
     await dbConnect();
-
     const news = await News.findById(params.id);
     
     if (!news) {
@@ -35,7 +28,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   try {
     await dbConnect();
@@ -65,11 +58,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   try {
     await dbConnect();
-
     const deletedNews = await News.findByIdAndDelete(params.id);
 
     if (!deletedNews) {
