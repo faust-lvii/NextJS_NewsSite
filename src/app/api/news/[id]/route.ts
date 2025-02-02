@@ -2,13 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { News } from '@/lib/db';
 import dbConnect from '@/lib/db';
 
+interface RequestContext {
+  params: { id: string }
+}
+
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  context: RequestContext
 ) {
   try {
     await dbConnect();
-    const news = await News.findById(params.id);
+    const news = await News.findById(context.params.id);
     
     if (!news) {
       return NextResponse.json(
@@ -28,14 +32,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RequestContext
 ) {
   try {
     await dbConnect();
     const body = await request.json();
 
     const updatedNews = await News.findByIdAndUpdate(
-      params.id,
+      context.params.id,
       body,
       { new: true }
     );
@@ -57,12 +61,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  context: RequestContext
 ) {
   try {
     await dbConnect();
-    const deletedNews = await News.findByIdAndDelete(params.id);
+    const deletedNews = await News.findByIdAndDelete(context.params.id);
 
     if (!deletedNews) {
       return NextResponse.json(
